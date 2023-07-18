@@ -77,9 +77,9 @@ label_color_map = []
 
 
 
-class CyclicSwav(torch.nn.Module):
+class TimeT(torch.nn.Module):
     def __init__(self, feature_extractor, prototype_number=10, prototype_init=None):
-        super(CyclicSwav, self).__init__()
+        super(TimeT, self).__init__()
         self.feature_extractor = feature_extractor
         prototype_shapes = (prototype_number, self.feature_extractor.feature_dim)
         self.teacher = None
@@ -228,10 +228,6 @@ class CyclicSwav(torch.nn.Module):
         else:
             criterion = torch.nn.CrossEntropyLoss()
         bs, fs, c, h, w = x.shape
-        ## convert the size to 14 x 14 annotations
-        # annotations = F.interpolate(annotations, size=(14, 14), mode='nearest')
-        # annotations = torch.nn.functional.one_hot(annotations.to(torch.int64), num_classes=self.prototypes.shape[0])
-        # annotations = annotations.permute(0, 1, 4, 2, 3).float()
         if self.teacher is not None:
             teacher_features, teacher_attentions = self.teacher(x.view(bs * fs, c, h, w))
             _, num_patches, dim = teacher_features.shape
@@ -281,145 +277,29 @@ class CyclicSwav(torch.nn.Module):
         for i, data in enumerate(features):
             scores = batch_scores[i]
             q =  batch_q[i]
-            # gt = annotations[i]
-
-            # q, scores = self.get_scores(data[0].unsqueeze(0))
-            # q = q.squeeze(0)
-            # scores = scores.squeeze(0)
 
             scores = scores ## just for temprature scaling
-            # first_frame_segmentation = torch.softmax(scores, dim=-1)
-            # scores = self.reshape_to_spatial_resolution(scores, self.feature_extractor.spatial_resolution)
             if mask_features:
-                ## concatenate the attention of the first and last frame
-                # mask = torch.cat([attentions[i, 0].unsqueeze(0), attentions[i, -1].unsqueeze(0)], dim=0)
                 mask = attentions[i, -1].unsqueeze(0)
-                # loss = loss * attentions[i, 0].unsqueeze(0)
 
-            # loss = (-torch.log(scores + eps) * gt[0]).mean()
-            ## keep the maximum elmeent and set other elements to zero
-            # scores = scores * (scores == scores.max(dim=-1, keepdim=True)[0]).float()
-            # first_frame_segmentation = torch.softmax(scores / 0.1, dim=-1)
-            # first_frame_segmentation = gt[0].permute(1, 2, 0).flatten(0, 1)
-            ## This is for when features_exist is False
-            # forward_segmentation_maps = self.make_seg_maps(q, x[i], n_last_frames, size_mask_neighborhood, topk, features_exist=False)
-            ## This is for when features_exist is True
             forward_segmentation_maps = self.make_seg_maps(q, backbone_features[i], n_last_frames, size_mask_neighborhood, topk, features_exist=True)
-
-            # forward_segmentation_maps = forward_segmentation_maps.to(device)
 
             q = self.reshape_to_spatial_resolution(q, self.feature_extractor.spatial_resolution)
             scores = self.reshape_to_spatial_resolution(scores, self.feature_extractor.spatial_resolution)
-            # # forward_segmentation_maps = torch.cat([q.unsqueeze(0), forward_segmentation_maps], dim=0) ## shape [num_frames, dim, spatial_resolution, spatial_resolution]
-
-            # forward_segmentation_maps = torch.cat([scores.unsqueeze(0), forward_segmentation_maps[-1].unsqueeze(0)], dim=0) ## shape [num_frames, dim, spatial_resolution, spatial_resolution]
-            # ## keep the maximum elmeent and set other elements to zero
-            # forward_segmentation_maps = forward_segmentation_maps * (forward_segmentation_maps == forward_segmentation_maps.max(dim=1, keepdim=True)[0]).float()
-
-            # ################ just for test ################
-            # first_frame_segmentation = torch.softmax(scores / 0.1, dim=-1)
-            # first_frame_segmentation = q
-            # first_frame_segmentation = self.reshape_to_spatial_resolution(first_frame_segmentation, self.feature_extractor.spatial_resolution)
-            # first_frame_segmentation = nn.functional.interpolate(first_frame_segmentation.type(torch.DoubleTensor).unsqueeze(0), size=(224, 224), mode='bilinear', align_corners=False).type(torch.FloatTensor)[0]
-            # seg_map =  first_frame_segmentation.argmax(dim=0)
-            # forward_segmentation_maps = nn.functional.interpolate(forward_segmentation_maps.type(torch.DoubleTensor), size=(224, 224), mode='bilinear', align_corners=False).type(torch.FloatTensor)
-            # forward_segmentation_maps = forward_segmentation_maps.max(dim=1)[1]
-            ## denormalize x 
-            # x_test = x[i, 0] * torch.tensor([0.229, 0.224, 0.225]).view(3, 1, 1).to(device) + torch.tensor([0.485, 0.456, 0.406]).view(3, 1, 1).to(device)
-            # grid = make_overlayed_grid(x_test, seg_map)
-            # plt.imshow(grid.permute(1, 2, 0))
-            # plt.show()
-            # x_test = x[i, -1] * torch.tensor([0.229, 0.224, 0.225]).view(3, 1, 1).to(device) + torch.tensor([0.485, 0.456, 0.406]).view(3, 1, 1).to(device)
-            # grid = make_overlayed_grid(x_test, forward_segmentation_maps[-1])
-            # plt.imshow(grid.permute(1, 2, 0))
-            # plt.show()
-            # ################ just for test ################
-
-
-            # # masks = F.interpolate(forward_segmentation_maps.type(torch.float32), scale_factor=224 / 14, mode='bilinear', align_corners=False, recompute_scale_factor=False)
-            # # _, masks = torch.max(masks, dim=1)
-            # # for j, mask in enumerate(masks):
-            # #     img =  localize_objects(x[i, j].detach().clone(), mask.detach().clone())
-            # #     plt.imshow(img)
-
             target_scores = target_batch_scores[i]
-            # target_scores = torch.softmax(target_scores / 0.1, dim=-1)
             target_scores = self.reshape_to_spatial_resolution(target_scores, self.feature_extractor.spatial_resolution)
             target_q = target_batch_q[i]
-            # # target_q, target_scores = self.get_scores(data[-1].unsqueeze(0))
-            # # target_q = target_q.squeeze(0)
-            # # target_scores = target_scores.squeeze(0)
-
-            # target_scores = torch.softmax(target_scores / 0.1, dim=-1)
-            # target_scores = target_scores / 0.1 ## just for temprature scaling
-            # ## keep the maximum elmeent and set other elements to zero
-            # target_scores = target_scores * (target_scores == target_scores.max(dim=-1, keepdim=True)[0]).float()
-            # backward_segmentation_maps = self.make_seg_maps(target_q, torch.flip(x[i], dims=[0]), n_last_frames, size_mask_neighborhood, topk)
-            # backward_segmentation_maps = backward_segmentation_maps.to(device)
 
             target_q = self.reshape_to_spatial_resolution(target_q, self.feature_extractor.spatial_resolution)
-
-            ## just for test
-            # last_frame_segmentation = nn.functional.interpolate(target_scores.type(torch.DoubleTensor).unsqueeze(0), size=(224, 224), mode='bilinear', align_corners=False).type(torch.FloatTensor)[0]
-            # seg_map =  last_frame_segmentation.argmax(dim=0)
-            # x_test = x[i, -1] * torch.tensor([0.229, 0.224, 0.225]).view(3, 1, 1).to(device) + torch.tensor([0.485, 0.456, 0.406]).view(3, 1, 1).to(device)
-            # grid = make_overlayed_grid(x_test, seg_map)
-            # plt.imshow(grid.permute(1, 2, 0))
-            # plt.show()
-
-
-            # target_scores = self.reshape_to_spatial_resolution(target_scores, self.feature_extractor.spatial_resolution)
-            # # backward_segmentation_maps = torch.cat([target_q.unsqueeze(0), backward_segmentation_maps], dim=0)
-            # backward_segmentation_maps = torch.cat([target_q.unsqueeze(0), q.unsqueeze(0)], dim=0)
-            # ## keep the maximum elmeent and set other elements to zero
-            # backward_segmentation_maps = backward_segmentation_maps * (backward_segmentation_maps == backward_segmentation_maps.max(dim=1, keepdim=True)[0]).float()
-            # backward_segmentation_maps = backward_segmentation_maps.argmax(dim=1).long()
-            # backward_segmentation_maps = torch.flip(backward_segmentation_maps, dims=[0])
-            # # select the first and last index of gt
-            # backward_segmentation_maps = torch.cat([gt[0].unsqueeze(0), gt[-1].unsqueeze(0)], dim=0)
-            # weights = torch.ones(forward_segmentation_maps.shape[0]).to(device)
-            # # weights[-1] = len(weights)
-            # forward_loss = torch.mean(torch.log(forward_segmentation_maps + eps) * backward_segmentation_maps, dim=(1, 2, 3))
-            # backward_loss = torch.mean(torch.log(backward_segmentation_maps + eps) * forward_segmentation_maps, dim=(1, 2, 3))
-            # loss = torch.mean(- 0.5 * weights * (forward_loss + backward_loss))
             p_map = forward_segmentation_maps[-1]
-            # loss2 = (torch.log(p_map + eps) * target_q).sum(dim=0)
             loss2 = 0
-            # loss1 = (torch.log(target_scores + eps) * p_map).sum(dim=0)
-            ## soft assignment loss
-            # loss1 = -(torch.log(target_scores + eps) * target_q).sum(dim=0)
-            # loss1 = loss1.mean()
-            ## hard assignment loss
             loss1 = criterion(target_scores.unsqueeze(0) / 0.1, p_map.unsqueeze(0).argmax(dim=1).long())
-
-            # loss2 = criterion(p_map.unsqueeze(0), target_q.unsqueeze(0).argmax(dim=1).long())
-
             loss = loss1 + loss2
-
-            # loss = criterion(forward_segmentation_maps, backward_segmentation_maps)
             if mask_features:
                 loss = loss * mask
             loss = loss.mean()
             batch_loss += loss
         return batch_loss / bs
-
-
-# class PatchSwav(CyclicSwav):
-#     def __init__(self, args, model, prototype_shape = (10, 784), prototype_init=None):
-#         super().__init__(args, model, prototype_shape, prototype_init)
-    
-#     def forward(self, x):
-#         eps=1e-7
-#         bs, fs, c, h, w = x.shape
-#         features, attentions = get_features(self.model, self.architecture, x.view(bs * fs, c, h, w)) ## shape [bs * fs, num_patches, dim]
-#         _, num_patches, dim = features.shape
-#         features = features.view(bs, fs, num_patches, dim)
-
-#         source_features = features[:, 0]
-#         batch_q, batch_scores = self.get_scores(source_features)
-#         batch_scores = torch.softmax(batch_scores, dim=-1)
-#         loss = -1 * torch.mean(torch.log(batch_scores + eps) * batch_q)
-#         return loss
 
 
 def localize_objects(input_img, cluster_map):
@@ -441,8 +321,6 @@ def localize_objects(input_img, cluster_map):
 
 def localize_clip(data, cluster_map, logging_directory, name, w_featmap=28, h_featmap=28):
     bs, fs, c, h, w = data.shape
-    # cluster_map = torch.Tensor(cluster_map.reshape(bs, fs, w_featmap, h_featmap))
-    # cluster_map = nn.functional.interpolate(cluster_map.type(torch.DoubleTensor), scale_factor=8, mode="nearest").detach().cpu()
     cluster_map = cluster_map
     for i, datum in enumerate(data):
         frame_buffer = []
@@ -465,9 +343,6 @@ def make_overlayed_grid(input_img, cluster_map):
 
 def add_localization_results(input_img, cluster_map, name, step, writer):
     grid = make_overlayed_grid(input_img, cluster_map)
-    # fig = make_figure(grid)
-    # fig = make_figure(input_img, cluster_map)
-    # writer.add_figure(name, fig, global_step=step)
     writer.add_image(name, grid, global_step=step)
 
 
@@ -575,10 +450,6 @@ def log_clip_localization(model, eval_data, use_mask, evaluation_protocol, loggi
         features = features.view(bs, fs, num_patches, dim)
         if use_mask:
             features, attentions = apply_attention_mask(features, attentions, model.feature_extractor.spatial_resolution)
-        # first_frame_features = features[:, 0, :, :]
-        # cluster_centers = KMeans(n_clusters=21, random_state=0).fit(first_frame_features.reshape(bs * num_patches, -1).detach().cpu().numpy()).cluster_centers_
-        # prototypes = torch.from_numpy(cluster_centers).to(device)
-        # assignments = proto_clustering(features.view(num_samples, num_patches, dim), prototypes, input_size=model.feature_extractor.spatial_resolution, output_size=input_resolution) ## shape [bs * fs, input_size, input_size]
         assignments = cluster_features(features, 200, model.feature_extractor.spatial_resolution, input_resolution, "dataset-wise")
         size = assignments.size(-1)
         assignments = assignments.view(bs, fs, size, size)
@@ -586,7 +457,7 @@ def log_clip_localization(model, eval_data, use_mask, evaluation_protocol, loggi
         localize_clip(denormalize(eval_data, mean=[0.485, 0.456, 0.406], std=[0.228, 0.224, 0.225]), assignments, logging_directory, str(epoch_number))
 
 
-def save_checkpoint(model: CyclicSwav, optimizer: SwavOptimizer, epch_num: int, filename: str) -> None:
+def save_checkpoint(model: TimeT, optimizer: SwavOptimizer, epch_num: int, filename: str) -> None:
     """Save the model and optimizer state to a checkpoint file."""
     optimizer_state_dict, global_step = optimizer.state_dict()
     state = {
@@ -619,7 +490,7 @@ def find_the_last_logging_directory(main_logging_directory: str) -> str:
         print(f'No logging directory found at {main_logging_directory}')
         sys.exit(0)
 
-def load_checkpoint(model: CyclicSwav, swav_optimizer: SwavOptimizer, filename: str) -> None:
+def load_checkpoint(model: TimeT, swav_optimizer: SwavOptimizer, filename: str) -> None:
     """Load the model and optimizer state from a checkpoint file."""
     try:
         state = torch.load(filename)
@@ -634,7 +505,7 @@ def load_checkpoint(model: CyclicSwav, swav_optimizer: SwavOptimizer, filename: 
         return 0
     
 
-def cyclic_swav(gpu=0, args=None):
+def time_tuning(gpu=0, args=None):
     global device
     device = torch.device("cuda", gpu) 
     global world_size
@@ -707,7 +578,7 @@ def cyclic_swav(gpu=0, args=None):
         feature_extractor = FeatureExtractor(architecture, model_path, [1024, 1024, 512, 256], unfreeze_layers=["blocks.11", "blocks.10"])  ## unfreeze_layers=["blocks.11", "blocks.10"]
     else:
         feature_extractor = FeatureExtractor(architecture, model_path)
-    model = CyclicSwav(feature_extractor, num_clusters)
+    model = TimeT(feature_extractor, num_clusters)
     # model.load_state_dict(torch.load("/home/ssalehi/video/vos_pretrained/cyclic_swav/src/0.1365865812925643_152737_dino_ytvos_128_200.pth"))
     if world_size > 1:
         model = model.to(device)
@@ -847,5 +718,5 @@ if __name__ == '__main__':
     args = parser.parse_args()
     os.environ['MASTER_ADDR'] = '127.0.0.1'
     os.environ['MASTER_PORT'] = '29500'
-    mp.spawn(cyclic_swav, nprocs=args.gpus, args=(args,))
+    mp.spawn(time_tuning, nprocs=args.gpus, args=(args,))
     
