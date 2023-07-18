@@ -98,10 +98,10 @@ def put_all_zip_files_in_all_subdirs_in_base(based_dir):
 
 
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
 
     ## put the address of your dataset according to the following examples:
-    
+
     # put_all_zip_files_in_all_subdirs_in_base('/ssdstore/ssalehi/VISOR/dataset/GroundTruth-SparseAnnotations/rgb_frames/train')
     # put_all_zip_files_in_all_subdirs_in_base('/ssdstore/ssalehi/VISOR/dataset/GroundTruth-SparseAnnotations/rgb_frames/val')
     # put_all_zip_files_in_all_subdirs_in_base('/ssdstore/ssalehi/VISOR/dataset/GroundTruth-SparseAnnotations/rgb_frames/test')
