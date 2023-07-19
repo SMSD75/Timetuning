@@ -108,7 +108,12 @@ To start training from scratch, execute `time_tuning.py`. By default, the argume
 
 # Visualizations
 
-[View the HTML file](Visualizations/Additional_Visualizations.html)
+For more visualizations please download Visualizations folder.
 
+[PASCAL](http://host.robots.ox.ac.uk/pascal/VOC/) K=500 with greedy merging.
 
-
+|    |    |    |    |
+|:--:|:--:|:--:|:--:|
+| ![](Visualizations/Pascal/0_0.gif)  | ![](Visualizations/Pascal/0_1.gif)  | ![](Visualizations/Pascal/0_16.gif) | ![](Visualizations/Pascal/0_2.gif)  |
+| ![](Visualizations/Pascal/0_20.gif) | ![](Visualizations/Pascal/0_22.gif) | ![](Visualizations/Pascal/0_27.gif) | ![](Visualizations/Pascal/0_29.gif) |
+| ![](Visualizations/Pascal/2_44.gif)  | ![](Visualizations/Pascal/1_17.gif) | ![](Visualizations/Pascal/0_36.gif) | ![](Visualizations/Pascal/0_48.gif) |
