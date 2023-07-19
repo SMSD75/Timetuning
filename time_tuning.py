@@ -552,9 +552,6 @@ def time_tuning(gpu=0, args=None):
     head_lr = args.head_lr
     ## creat a string based on the concatenation of the arguments
     arg_string = ""
-    # for arg in vars(args):
-    #     arg_string += f"_{arg}:{getattr(args, arg)}"
-    
     date_year = datetime.now().strftime("%Y%m%d")
     date_hour = datetime.now().strftime("%H%M%S") 
     arg_string = datetime.now().strftime("%Y%m%d") + "/" + datetime.now().strftime("%H%M%S")
@@ -566,7 +563,6 @@ def time_tuning(gpu=0, args=None):
     if gpu == 0:
         make_working_directory(visualization_directory)
         global writer
-        # writer = SummaryWriter(datetime.now().strftime("%Y%m%d") + "/" + datetime.now().strftime("%H%M%S") + "_nc=400-nf=4-lr=0.001-Adam-ssn-DinoQ-head-HardAssignment-tc=0.1-davis") #_nc=10-nf=2-lr=0.001-Adam-ssn-SwavQ-head-HardAssignment-tc=0.1-pascal
         writer = SummaryWriter(log_dir=logging_directory)
         ## make a config file with the arguments
         with open(f"{logging_directory}/config.txt", "w") as f:
@@ -579,7 +575,7 @@ def time_tuning(gpu=0, args=None):
     else:
         feature_extractor = FeatureExtractor(architecture, model_path)
     model = TimeT(feature_extractor, num_clusters)
-    # model.load_state_dict(torch.load("/home/ssalehi/video/vos_pretrained/cyclic_swav/src/0.1365865812925643_152737_dino_ytvos_128_200.pth"))
+    # model.load_state_dict(torch.load("TimeT.pth"))
     if world_size > 1:
         model = model.to(device)
         # model = nn.SyncBatchNorm.convert_sync_batchnorm(model)
