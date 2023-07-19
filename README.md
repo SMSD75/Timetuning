@@ -106,4 +106,9 @@ Please follow these instructions to accurately reproduce our findings.
 
 To start training from scratch, execute `time_tuning.py`. By default, the argument values are set for single GPU training without the utilization of an Exponential Moving Average (EMA) teacher, and no queue is used. However, activating these features has been observed to yield a slight performance enhancement on certain datasets, like [MOSE](https://henghuiding.github.io/MOSE/). The validation performance is logged every four epochs, while the loss is recorded with each iteration.
 
+# Visualizations
+
+[View the HTML file](Visualizations/Additional_Visualizations.html)
+
+
 
