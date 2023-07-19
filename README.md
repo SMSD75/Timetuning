@@ -63,7 +63,7 @@ Please ensure your dataset adheres to this structure for compatibility.
 
 You can adjust the paths of your dataset as has been set in the function `make_loader` in `data_loader.py`. To ensure accurate loading, this function should be set to point directly to the root of your dataset, specifically to the `JPEGImages` and `Annotations` for images and labels, respectively. If this path is incorrect, the dataloader will not be able to find and load your dataset correctly.
 
-This path configuration is crucial as the dataloader automatically converts a video dataset to an image dataset to simplify the parsing process. Incorrect paths can result in inaccurate conversion, disrupting the correct loading and use of your dataset.
+The correct configuration of this path is crucial. If the directory `JPEGImages` contains videos rather than images, the dataloader will automatically react. It generates distinct subdirectories, each named after a video, and fills these with the corresponding video frames. Moreover, the dataloader determines whether the given path is for an unconverted video dataset or a correctly converted image dataset. It does so by counting the depth of the directories it needs to traverse to reach video or image files. This counting helps it discern the type of data to handle.
 
 Please ensure that the paths you provide are correct and accurately point to your dataset's location.
 
