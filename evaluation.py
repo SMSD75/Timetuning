@@ -52,9 +52,9 @@ formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(message)s')
 
 
 
-class CyclicSwav(torch.nn.Module):
+class TimeT(torch.nn.Module):
     def __init__(self, feature_extractor, prototype_number=10, prototype_init=None):
-        super(CyclicSwav, self).__init__()
+        super(TimeT, self).__init__()
         self.feature_extractor = feature_extractor
         prototype_shapes = (prototype_number, self.feature_extractor.feature_dim)
         self.teacher = None
@@ -110,32 +110,6 @@ class CyclicSwav(torch.nn.Module):
             scores = torch.mm(normalized_x, self.prototypes.t())  ## shape [num_patches, num_prototypes]
         return scores
     
-    # def make_seg_maps(self, first_frame_segmentation, orig_x, n_last_frames, size_mask_neighborhood, topk):
-    #     spatial_resolution = self.feature_extractor.spatial_resolution
-    #     scores = first_frame_segmentation.view(spatial_resolution, spatial_resolution, -1)
-    #     scores = scores.permute(2, 0, 1)    
-    #     further_segmentation_maps = propagate_labels(n_last_frames, size_mask_neighborhood, topk, self.feature_extractor, orig_x, scores.unsqueeze(0)) ## shape [chanel, spatial_resolution, spatial_resolution] propagating scores as labels
-    #     scaled_segmentation_maps = []
-    #     for i, mask in enumerate(further_segmentation_maps):
-    #         # scaled_mask = torch.softmax(mask / 0.1, dim=0)
-    #         scaled_mask = mask
-    #         # normalized_mask =  normalized_mask / normalized_mask.sum(dim=0, keepdim=True)
-    #         scaled_segmentation_maps.append(scaled_mask)
-    #     return torch.stack(scaled_segmentation_maps)
-
-    
-    # def find_optimal_assignment(self, scores, epsilon, sinkhorn_iterations):
-    #     """
-    #     Computes the Sinkhorn matrix Q.
-    #     :param scores: similarity matrix
-    #     :return: Sinkhorn matrix Q
-    #     """
-    #     with torch.no_grad():
-    #         q = torch.exp(scores / epsilon).t()
-    #         q = sinkhorn(q, sinkhorn_iterations, world_size)
-    #         # q = torch.softmax(scores / epsilon, dim=0)
-    #         # q = q / q.sum(dim=1, keepdim=True)
-    #     return q
     
     def reshape_to_spatial_resolution(self, x, spatial_resolution):
         """
@@ -190,10 +164,6 @@ class CyclicSwav(torch.nn.Module):
         else:
             criterion = torch.nn.CrossEntropyLoss()
         bs, fs, c, h, w = x.shape
-        ## convert the size to 14 x 14 annotations
-        # annotations = F.interpolate(annotations, size=(14, 14), mode='nearest')
-        # annotations = torch.nn.functional.one_hot(annotations.to(torch.int64), num_classes=self.prototypes.shape[0])
-        # annotations = annotations.permute(0, 1, 4, 2, 3).float()
         if self.teacher is not None:
             teacher_features, teacher_attentions = self.teacher(x.view(bs * fs, c, h, w))
             _, num_patches, dim = teacher_features.shape
@@ -225,113 +195,28 @@ class CyclicSwav(torch.nn.Module):
         for i, data in enumerate(features):
             scores = batch_scores[i]
             q =  batch_q[i]
-            # gt = annotations[i]
-
-            # q, scores = self.get_scores(data[0].unsqueeze(0))
-            # q = q.squeeze(0)
-            # scores = scores.squeeze(0)
-
             scores = scores ## just for temprature scaling
-            # first_frame_segmentation = torch.softmax(scores, dim=-1)
-            # scores = self.reshape_to_spatial_resolution(scores, self.feature_extractor.spatial_resolution)
             if mask_features:
-                ## concatenate the attention of the first and last frame
-                # mask = torch.cat([attentions[i, 0].unsqueeze(0), attentions[i, -1].unsqueeze(0)], dim=0)
                 mask = attentions[i, -1].unsqueeze(0)
-                # loss = loss * attentions[i, 0].unsqueeze(0)
 
-            # loss = (-torch.log(scores + eps) * gt[0]).mean()
-            ## keep the maximum elmeent and set other elements to zero
-            # scores = scores * (scores == scores.max(dim=-1, keepdim=True)[0]).float()
-            # first_frame_segmentation = torch.softmax(scores / 0.1, dim=-1)
-            # first_frame_segmentation = gt[0].permute(1, 2, 0).flatten(0, 1)
             forward_segmentation_maps = self.make_seg_maps(q, x[i], n_last_frames, size_mask_neighborhood, topk)
-            # forward_segmentation_maps = forward_segmentation_maps.to(device)
 
             q = self.reshape_to_spatial_resolution(q, self.feature_extractor.spatial_resolution)
             scores = self.reshape_to_spatial_resolution(scores, self.feature_extractor.spatial_resolution)
-            # # forward_segmentation_maps = torch.cat([q.unsqueeze(0), forward_segmentation_maps], dim=0) ## shape [num_frames, dim, spatial_resolution, spatial_resolution]
-
-            # forward_segmentation_maps = torch.cat([scores.unsqueeze(0), forward_segmentation_maps[-1].unsqueeze(0)], dim=0) ## shape [num_frames, dim, spatial_resolution, spatial_resolution]
-            # ## keep the maximum elmeent and set other elements to zero
-            # forward_segmentation_maps = forward_segmentation_maps * (forward_segmentation_maps == forward_segmentation_maps.max(dim=1, keepdim=True)[0]).float()
-
-            # ################ just for test ################
-            # first_frame_segmentation = torch.softmax(scores / 0.1, dim=-1)
-            # first_frame_segmentation = q
-            # first_frame_segmentation = self.reshape_to_spatial_resolution(first_frame_segmentation, self.feature_extractor.spatial_resolution)
-            # first_frame_segmentation = nn.functional.interpolate(first_frame_segmentation.type(torch.DoubleTensor).unsqueeze(0), size=(224, 224), mode='bilinear', align_corners=False).type(torch.FloatTensor)[0]
-            # seg_map =  first_frame_segmentation.argmax(dim=0)
-            # forward_segmentation_maps = nn.functional.interpolate(forward_segmentation_maps.type(torch.DoubleTensor), size=(224, 224), mode='bilinear', align_corners=False).type(torch.FloatTensor)
-            # forward_segmentation_maps = forward_segmentation_maps.max(dim=1)[1]
-            ## denormalize x 
-            # x_test = x[i, 0] * torch.tensor([0.229, 0.224, 0.225]).view(3, 1, 1).to(device) + torch.tensor([0.485, 0.456, 0.406]).view(3, 1, 1).to(device)
-            # grid = make_overlayed_grid(x_test, seg_map)
-            # plt.imshow(grid.permute(1, 2, 0))
-            # plt.show()
-            # x_test = x[i, -1] * torch.tensor([0.229, 0.224, 0.225]).view(3, 1, 1).to(device) + torch.tensor([0.485, 0.456, 0.406]).view(3, 1, 1).to(device)
-            # grid = make_overlayed_grid(x_test, forward_segmentation_maps[-1])
-            # plt.imshow(grid.permute(1, 2, 0))
-            # plt.show()
-            # ################ just for test ################
-
-
-            # # masks = F.interpolate(forward_segmentation_maps.type(torch.float32), scale_factor=224 / 14, mode='bilinear', align_corners=False, recompute_scale_factor=False)
-            # # _, masks = torch.max(masks, dim=1)
-            # # for j, mask in enumerate(masks):
-            # #     img =  localize_objects(x[i, j].detach().clone(), mask.detach().clone())
-            # #     plt.imshow(img)
 
             target_scores = target_batch_scores[i]
-            # target_scores = torch.softmax(target_scores / 0.1, dim=-1)
+
             target_scores = self.reshape_to_spatial_resolution(target_scores, self.feature_extractor.spatial_resolution)
             target_q = target_batch_q[i]
-            # # target_q, target_scores = self.get_scores(data[-1].unsqueeze(0))
-            # # target_q = target_q.squeeze(0)
-            # # target_scores = target_scores.squeeze(0)
-
-            # target_scores = torch.softmax(target_scores / 0.1, dim=-1)
-            # target_scores = target_scores / 0.1 ## just for temprature scaling
-            # ## keep the maximum elmeent and set other elements to zero
-            # target_scores = target_scores * (target_scores == target_scores.max(dim=-1, keepdim=True)[0]).float()
-            # backward_segmentation_maps = self.make_seg_maps(target_q, torch.flip(x[i], dims=[0]), n_last_frames, size_mask_neighborhood, topk)
-            # backward_segmentation_maps = backward_segmentation_maps.to(device)
 
             target_q = self.reshape_to_spatial_resolution(target_q, self.feature_extractor.spatial_resolution)
 
-            ## just for test
-            # last_frame_segmentation = nn.functional.interpolate(target_scores.type(torch.DoubleTensor).unsqueeze(0), size=(224, 224), mode='bilinear', align_corners=False).type(torch.FloatTensor)[0]
-            # seg_map =  last_frame_segmentation.argmax(dim=0)
-            # x_test = x[i, -1] * torch.tensor([0.229, 0.224, 0.225]).view(3, 1, 1).to(device) + torch.tensor([0.485, 0.456, 0.406]).view(3, 1, 1).to(device)
-            # grid = make_overlayed_grid(x_test, seg_map)
-            # plt.imshow(grid.permute(1, 2, 0))
-            # plt.show()
-
-
-            # target_scores = self.reshape_to_spatial_resolution(target_scores, self.feature_extractor.spatial_resolution)
-            # # backward_segmentation_maps = torch.cat([target_q.unsqueeze(0), backward_segmentation_maps], dim=0)
-            # backward_segmentation_maps = torch.cat([target_q.unsqueeze(0), q.unsqueeze(0)], dim=0)
-            # ## keep the maximum elmeent and set other elements to zero
-            # backward_segmentation_maps = backward_segmentation_maps * (backward_segmentation_maps == backward_segmentation_maps.max(dim=1, keepdim=True)[0]).float()
-            # backward_segmentation_maps = backward_segmentation_maps.argmax(dim=1).long()
-            # backward_segmentation_maps = torch.flip(backward_segmentation_maps, dims=[0])
-            # # select the first and last index of gt
-            # backward_segmentation_maps = torch.cat([gt[0].unsqueeze(0), gt[-1].unsqueeze(0)], dim=0)
-            # weights = torch.ones(forward_segmentation_maps.shape[0]).to(device)
-            # # weights[-1] = len(weights)
-            # forward_loss = torch.mean(torch.log(forward_segmentation_maps + eps) * backward_segmentation_maps, dim=(1, 2, 3))
-            # backward_loss = torch.mean(torch.log(backward_segmentation_maps + eps) * forward_segmentation_maps, dim=(1, 2, 3))
-            # loss = torch.mean(- 0.5 * weights * (forward_loss + backward_loss))
             p_map = forward_segmentation_maps[-1]
-            # loss2 = (torch.log(p_map + eps) * target_q).sum(dim=0)
             loss2 = 0
-            # loss1 = (torch.log(target_scores + eps) * p_map).sum(dim=0)
             loss1 = criterion(target_scores.unsqueeze(0) / 0.1, p_map.unsqueeze(0).argmax(dim=1).long())
-            # loss2 = criterion(p_map.unsqueeze(0), target_q.unsqueeze(0).argmax(dim=1).long())
 
             loss = loss1 + loss2
 
-            # loss = criterion(forward_segmentation_maps, backward_segmentation_maps)
             if mask_features:
                 loss = loss * mask
             loss = loss.mean()
@@ -418,7 +303,7 @@ def evaluate_localizations(PredsEval, gts, preds, evaluation_protocol, logging_d
             for j, frame in enumerate(datum):
                 valid = gts[i, j] != 255   # Only for Pascal dataset
                 PredsEval.update(gts[i, j][valid].flatten(), frame[valid].flatten())  # Only for Pascal dataset
-                # PredsEval.update(gts[i, j].flatten(), frame.flatten())
+                # PredsEval.update(gts[i, j].flatten(), frame.flatten()) ## For all the other datasets
         score, tp, fp, fn, reordered_preds, matched_bg_clusters = PredsEval.compute(True, many_to_one, precision_based=precision_based)
         scores.append(score)
         PredsEval.reset()
@@ -508,8 +393,6 @@ class Evaluator(object):
                     data, annotations, label = train_data
                 else:
                     data, annotations = train_data
-                # if "b19b3e22c0" not in data_names:
-                #     continue
                 if len(data.shape) == 6:
                     data = data.squeeze(1)
                     annotations = annotations.squeeze(1)
@@ -545,7 +428,6 @@ class Evaluator(object):
             annotations = torch.cat(annotations_list, dim=0)
             print(annotations.shape)
             annotations = nn.functional.interpolate(annotations.type(torch.DoubleTensor), size=(eval_resolution, eval_resolution), mode="nearest")
-            # annotations = annotations.squeeze()
             if self.clustering_algorithm == "k-means":
                 if use_annotations:
                     cluster_maps = cluster_features(features, num_clusters, spatial_resolution, eval_resolution, evaluation_protocol, annotations)
@@ -566,8 +448,6 @@ class Evaluator(object):
             batch_iou_scores = []
             for i, train_data in enumerate(self.data_loader):
                 data, annotations, label = train_data
-                # if "b19b3e22c0" not in data_names:
-                #     continue
                 data = data.squeeze(1)
                 annotations = annotations.squeeze(1)
                 bs, fs, c, h, w = data.shape
@@ -581,19 +461,11 @@ class Evaluator(object):
                 if use_mask:
                     features, attentions = apply_attention_mask(features, attentions, spatial_resolution)
 
-                # ## To test how a completely random input affects the results
-                # print(cluster_maps.shape)
-                # cluster_maps = 10 * torch.rand(cluster_maps.shape)
-                # cluster_maps = cluster_maps.int()
-                # print(cluster_maps.shape)
-                # ## The block is finished
-                # ## The following line of code is only used for single sample evaluation mode
                 if self.uvos_flag:
                     idx = annotations > 0
                     annotations[idx] = 1
                     attentions = process_attentions(attentions, spatial_resolution)
-                # ### single mode evaluation finished.
-                # annotations[idx] += 1
+
                 if self.clustering_algorithm == "k-means":
                     if use_annotations:
                         cluster_maps = cluster_features(features, num_clusters, spatial_resolution, eval_resolution, evaluation_protocol, annotations)
@@ -602,14 +474,8 @@ class Evaluator(object):
                 elif self.clustering_algorithm == "prototypes":
                     cluster_maps = proto_clustering(features.view(bs * fs, num_patches, dim), self.model.prototypes, spatial_resolution, output_size=eval_resolution, num_classes=num_clusters)
                     cluster_maps = cluster_maps.view(bs, fs, eval_resolution, eval_resolution)
-                # make_seg_maps(data.view(bs, fs, c, h, w), annotations, logging_directory, "test")
-
-                # cluster_maps = attentions
-                # cluster_maps = cluster_maps.view(bs, fs, spatial_resolution, spatial_resolution)
-                # cluster_maps = nn.functional.interpolate(cluster_maps, size=(eval_resolution, eval_resolution), mode="nearest")
 
                 batch_score = evaluate_localizations(self.PredsEval, annotations, cluster_maps, evaluation_protocol, logging_directory=None, many_to_one=many_to_one, precision_based=precision_based)
-                # batch_score = evaluate_localizations(PredsEval, annotations, annotations, evaluation_protocol, logging_directory=None, many_to_one=many_to_one)
                 print(f"batch score is {batch_score}")
                 self.logger.info(f"batch score is {batch_score}")
                 batch_iou_scores.append(batch_score)
@@ -622,13 +488,11 @@ class Evaluator(object):
 
 
 def main(args):
-    # OmegaConf.set_struct(cfg, False)
     num_epochs = 50
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
     np.seterr(all='raise')
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.INFO)
-    ### This section needs to be used in the further versions that are more polished.
     architecture = args.architecture
     dataset = args.dataset
     dataset_path = args.dataset_path
@@ -653,32 +517,24 @@ def main(args):
     print(f"The visualization directory has been made at {logging_directory}")
     ##############################################################
 
-    # PredsEval = PredsmIoU(num_clusters, 10, involve_bg=False)
-    
-    # model = get_backbone(architecture, model_path)
-    # model_path = "../models/leopart_vits16.ckpt"
-    # architecture = "ma"
-    # feature_extractor = FeatureExtractor(architecture, model_path, [1024, 1024, 512, 256])  ##  [1024, 1024, 512, 256] unfreeze_layers=["blocks.11", "blocks.10"]
+    feature_extractor = FeatureExtractor(architecture, model_path, [1024, 1024, 512, 256])  ##  [1024, 1024, 512, 256] unfreeze_layers=["blocks.11", "blocks.10"]
     # model = feature_extractor
-    # model = CyclicSwav(feature_extractor, 200)
+    model = TimeT(feature_extractor, 200)
     if use_teacher:
         model.init_momentum_teacher()
         model.set_momentum_teacher_schedular_params(EMA_decay, 1., num_epochs, num_itr)
     # model.load_state_dict(torch.load('/home/ssalehi/video/DeTeFFp/logs/20230307/001011/0.09746987611917557_99.pth')) #'0.1365865812925643_152737_dino_ytvos_128_200.pth'
-    model = FeatureExtractor(architecture, model_path)
+    # model = FeatureExtractor(architecture, model_path)
     model = model.to(device)
     
     print(f"The selected model is {architecture} with the architecture as follows:")
     print(model)
 
-    # trns = trn.Compose([trn.ToTensor(), trn.Resize((input_resolution, input_resolution)), trn.CenterCrop(input_resolution)])
-    # target_trns = trn.Compose([trn.ToTensor(), trn.Resize((input_resolution, input_resolution), interpolation=f.InterpolationMode.NEAREST), trn.CenterCrop(input_resolution)])
-    # rand_color_jitter = video_transformations.RandomApply([video_transformations.ColorJitter(brightness=0.8, contrast=0.8, saturation=0.8, hue=0.2)], p=0.8)
-    video_transform_list = [video_transformations.Resize((224, 224), 'bilinear'), video_transformations.CenterCrop(224), video_transformations.ClipToTensor(mean=[0.485, 0.456, 0.406], std=[0.228, 0.224, 0.225])]
+    video_transform_list = [video_transformations.Resize((input_resolution, input_resolution), 'bilinear'), video_transformations.CenterCrop(input_resolution), video_transformations.ClipToTensor(mean=[0.485, 0.456, 0.406], std=[0.228, 0.224, 0.225])]
     video_transform = video_transformations.Compose(video_transform_list)
-    # train_loader = make_loader(dataset, num_frames, batch_size, SamplingMode.UNIFORM, frame_transform=None, target_transform=None, video_transform=video_transform, shuffle=False, num_workers=num_workers, pin_memory=True)
+    train_loader = make_loader(dataset, num_frames, batch_size, SamplingMode.UNIFORM, frame_transform=None, target_transform=None, video_transform=video_transform, shuffle=False, num_workers=num_workers, pin_memory=True)
     eval_resolution = 112 if evaluation_protocol == "dataset-wise" else input_resolution
-    train_loader = pascal_loader(60, "../../dataset/leopascal/VOCSegmentation", "val", eval_resolution, train_size=input_resolution)
+    # train_loader = pascal_loader(60, "../../dataset/leopascal/VOCSegmentation", "val", eval_resolution, train_size=input_resolution) ## Uncomment this line for Pascal VOC
     print("The dataset has been read.")
     evaluator = Evaluator(train_loader, model, logging_directory, uvos_flag, "k-means", f"evaluator1_{architecture}_{dataset}_{batch_size}_{num_clusters}_{input_resolution}_{evaluation_protocol}_{many_to_one}")
     evaluator.evaluate(many_to_one=many_to_one, evaluation_protocol=evaluation_protocol, eval_resolution=eval_resolution, num_clusters=num_clusters, use_annotations=False, use_mask=False, precision_based=precision_based)
@@ -689,18 +545,18 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--architecture", type=str, default="dino-s16", help="which back-bone architecture do you want to use?")
     parser.add_argument("--model_path", type=str, default= "/home/ssalehi/video/vos_pretrained/cyclic_swav/src/leopart_vits16.ckpt") # "../models/leopart_vits16.ckpt"
-    parser.add_argument("--dataset", type=str, default="pascal")
+    parser.add_argument("--dataset", type=str, default="davis_val")
     parser.add_argument("--dataset_path", type=str, default="../data") ## davis : "../../../SOTA_Nips2021/dense-ulearn-vos/data/davis2017"
     parser.add_argument("--destination_path", type=str, default="ytvos")
-    parser.add_argument("--evaluation_protocol", type=str, default="dataset-wise")
+    parser.add_argument("--evaluation_protocol", type=str, default="frame-wise")
     parser.add_argument("--logging_directory", type=str, default="visualizations")
     parser.add_argument("--batch_size", type=int, default=16)
     parser.add_argument("--num_workers", type=int, default=3)
-    parser.add_argument("--num_clusters", type=int, default=500)
+    parser.add_argument("--num_clusters", type=int, default=10)
     parser.add_argument("--input_resolution", type=int, default=224)
-    parser.add_argument("--many_to_one", type=bool, default=True)
+    parser.add_argument("--many_to_one", type=bool, default=False)
     parser.add_argument("--num_frames", type=int, default=4)
-    parser.add_argument("--precision_based", type=bool, default=True)
+    parser.add_argument("--precision_based", type=bool, default=False)
     parser.add_argument("--uvos", type=int, default=False)
     parser.add_argument("--use_teacher", type=bool, default=False)
     parser.add_argument("--EMA_decay", type=float, default=0.999)

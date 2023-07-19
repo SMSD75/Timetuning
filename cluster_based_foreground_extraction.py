@@ -20,7 +20,7 @@ import matplotlib
 from torch.utils.data import DataLoader
 # from VisTR.datasets.ytvos import YTVOSDataset
 from data_loader import SamplingMode, pascalVOCLoader, make_loader
-from evaluation import CyclicSwav, Evaluator
+from evaluation import TimeT, Evaluator
 from metrics import PredsmIoU, PredsmIoU_1
 import torchvision.transforms as trn
 from sklearn.cluster import KMeans
@@ -318,7 +318,7 @@ def main(args):
     # architecture = "ma"
     feature_extractor = FeatureExtractor(architecture, model_path, [1024, 1024, 512, 256])  ##  [1024, 1024, 512, 256] unfreeze_layers=["blocks.11", "blocks.10"]
     # model = feature_extractor
-    model = CyclicSwav(feature_extractor, 200)
+    model = TimeT(feature_extractor, 200)
     if use_teacher:
         model.init_momentum_teacher()
         model.set_momentum_teacher_schedular_params(EMA_decay, 1., num_epochs, num_itr)
@@ -334,11 +334,11 @@ def main(args):
     # rand_color_jitter = video_transformations.RandomApply([video_transformations.ColorJitter(brightness=0.8, contrast=0.8, saturation=0.8, hue=0.2)], p=0.8)
     video_transform_list = [video_transformations.Resize((input_resolution, input_resolution), 'bilinear'), video_transformations.CenterCrop(input_resolution), video_transformations.ClipToTensor(mean=[0.485, 0.456, 0.406], std=[0.228, 0.224, 0.225])]
     video_transform = video_transformations.Compose(video_transform_list)
-    train_loader = make_loader(dataset, num_frames, batch_size, SamplingMode.UNIFORM, frame_transform=None, target_transform=None, video_transform=video_transform, shuffle=False, num_workers=num_workers, pin_memory=True)
-    val_loader = make_loader(dataset + "_val", num_frames, batch_size, SamplingMode.UNIFORM, frame_transform=None, target_transform=None, video_transform=video_transform, shuffle=False, num_workers=num_workers, pin_memory=True)
+    # train_loader = make_loader(dataset, num_frames, batch_size, SamplingMode.UNIFORM, frame_transform=None, target_transform=None, video_transform=video_transform, shuffle=False, num_workers=num_workers, pin_memory=True)
+    # val_loader = make_loader(dataset + "_val", num_frames, batch_size, SamplingMode.UNIFORM, frame_transform=None, target_transform=None, video_transform=video_transform, shuffle=False, num_workers=num_workers, pin_memory=True)
     eval_resolution = 100 if evaluation_protocol == "dataset-wise" else input_resolution
-    # train_loader = pascal_loader(60, "../../dataset/leopascal/VOCSegmentation", "trainaug", eval_resolution, train_size=input_resolution)
-    # val_loader = pascal_loader(60, "../../dataset/leopascal/VOCSegmentation", "val", eval_resolution, train_size=input_resolution)
+    train_loader = pascal_loader(60, "../../dataset/leopascal/VOCSegmentation", "trainaug", eval_resolution, train_size=input_resolution)
+    val_loader = pascal_loader(60, "../../dataset/leopascal/VOCSegmentation", "val", eval_resolution, train_size=input_resolution)
     EVAL_FEATURE_DIM = 50  
     CBFE = ClusterBasedForegroundExtraction(model, k_fg_extraction, eval_resolution, EVAL_FEATURE_DIM, train_loader, val_loader)
     set = "val"
@@ -353,14 +353,14 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--architecture", type=str, default="dino-s16", help="which back-bone architecture do you want to use?")
     parser.add_argument("--model_path", type=str, default= "/home/ssalehi/video/dino/outputs/checkpoint0080.pth") # "../models/leopart_vits16.ckpt"
-    parser.add_argument("--dataset", type=str, default="ytvos")
+    parser.add_argument("--dataset", type=str, default="davis")
     parser.add_argument("--dataset_path", type=str, default="../data") ## davis : "../../../SOTA_Nips2021/dense-ulearn-vos/data/davis2017"
     parser.add_argument("--destination_path", type=str, default="ytvos")
     parser.add_argument("--evaluation_protocol", type=str, default="dataset-wise")
     parser.add_argument("--logging_directory", type=str, default="visualizations")
     parser.add_argument("--batch_size", type=int, default=16)
     parser.add_argument("--num_workers", type=int, default=3)
-    parser.add_argument("--k_fg_extraction", type=int, default=200)
+    parser.add_argument("--k_fg_extraction", type=int, default=300)
     parser.add_argument("--num_clusters", type=int, default=21)
     parser.add_argument("--input_resolution", type=int, default=448)
     parser.add_argument("--many_to_one", type=bool, default=False)

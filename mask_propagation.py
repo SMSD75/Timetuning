@@ -53,9 +53,9 @@ device = "cuda:0" if torch.cuda.is_available() else "cpu"
 mask_neighborhood = None
 
 
-class CyclicSwav(torch.nn.Module):
+class TimeT(torch.nn.Module):
     def __init__(self, feature_extractor, prototype_number=10, prototype_init=None):
-        super(CyclicSwav, self).__init__()
+        super(TimeT, self).__init__()
         self.feature_extractor = feature_extractor
         prototype_shapes = (prototype_number, self.feature_extractor.feature_dim)
         self.teacher = None
@@ -367,7 +367,7 @@ def label_propagation(size_mask_neighborhood, topk, model, frame_tar, list_frame
     """
     ## we only need to extract feature of the target frame
 
-    if isinstance(model, CyclicSwav):
+    if isinstance(model, TimeT):
         spatial_resolution = model.feature_extractor.spatial_resolution
     else:
         spatial_resolution = model.spatial_resolution
@@ -417,7 +417,7 @@ def propagate_labels(n_last_frames, size_mask_neighborhood, topk, model, frame_l
     """
     Evaluate tracking on a video given first frame & segmentation
     """
-    if isinstance(model, CyclicSwav):
+    if isinstance(model, TimeT):
         spatial_resolution = model.feature_extractor.spatial_resolution
     else:
         spatial_resolution = model.spatial_resolution
@@ -724,7 +724,7 @@ def mask_propagation(args):
 
     feature_extractor = FeatureExtractor(architecture, model_path, [1024, 1024, 512, 256])  ##  [1024, 1024, 512, 256] unfreeze_layers=["blocks.11", "blocks.10"]
     # feature_extractor = FeatureExtractor(architecture, model_path, [1024, 1024, 512, 256], [1024, 1024, 512, 256], unfreeze_layers=["blocks.11", "blocks.10"])
-    model = CyclicSwav(feature_extractor, 200)
+    model = TimeT(feature_extractor, 200)
     # model.load_state_dict(torch.load('logs_DeTeFFp/20230109/111039/0.1415744294352382_44.pth'))
 
     model = model.to(device)

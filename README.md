@@ -61,7 +61,7 @@ Please ensure your dataset adheres to this structure for compatibility.
 
 # Adjusting Paths in the Data Loader
 
-You can adjust the paths of your dataset as has been set in the function `make_loader` in `data_loader.py`. The path provided in this function should accurately point to the root of your dataset. If this path is incorrect, the dataloader will not be able to find and load your dataset correctly.
+You can adjust the paths of your dataset as has been set in the function `make_loader` in `data_loader.py`. To ensure accurate loading, this function should be set to point directly to the root of your dataset, specifically to the `JPEGImages` and `Annotations` for images and labels, respectively. If this path is incorrect, the dataloader will not be able to find and load your dataset correctly.
 
 This path configuration is crucial as the dataloader automatically converts a video dataset to an image dataset to simplify the parsing process. Incorrect paths can result in inaccurate conversion, disrupting the correct loading and use of your dataset.
 
@@ -76,3 +76,5 @@ Please ensure that the paths you provide are correct and accurately point to you
 3 - For video datasets, pass the `dataset_name_val` argument to the `make_loader` function in `data_loader.py`. This will allow you to load the validation set.
 
 Please follow these instructions to accurately reproduce our findings.
+
+

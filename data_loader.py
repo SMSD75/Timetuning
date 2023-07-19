@@ -549,16 +549,6 @@ class VideoDataset(torch.utils.data.Dataset):
             self.train_dict_lenghts[key] = len(os.listdir(key))
 
     
-    # def read_clip_frames(self, path):
-    #     files = sorted(glob.glob(path + "/" + "*.jpg"), key=numericalSort)
-    #     if len(files) == 0:
-    #         files = sorted(glob.glob(path + "/" + "*.png"), key=numericalSort)
-    #     images = []
-    #     for file in files:
-    #         frame = Image.open(file)
-    #         images.append(frame)
-    #     return images
-    
     def read_clips(self, path, clip_indices):
         clips = []
         files = sorted(glob.glob(path + "/" + "*.jpg"))
@@ -580,29 +570,6 @@ class VideoDataset(torch.utils.data.Dataset):
             clips.append(images)
         return clips
     
-    # def sample_clip(self, video_frames, annotation_frames, sampling_num):
-    #     size = video_frames.shape[0]
-    #     data = []
-    #     annotations = []
-    #     data_idx = []
-    #     for i in range(self.num_clips):
-    #         if self.sampling_mode == SamplingMode.UNIFORM:
-    #                 idx = random.sample(range(0, size), sampling_num)
-    #                 idx.sort()
-    #                 data += [video_frames[idx]]
-    #                 annotations += [annotation_frames[idx]]
-    #                 data_idx.append(idx)
-    #         elif self.sampling_mode == SamplingMode.DENSE:
-    #                 base = random.randint(0, size - sampling_num)
-    #                 idx = range(base, base + sampling_num)
-    #                 data +=  [video_frames[idx]]
-    #                 annotations += [annotation_frames[idx]]
-    #                 data_idx.append(idx)
-    #         elif self.sampling_mode == SamplingMode.Full:
-    #                 data +=  [video_frames]
-    #                 annotations += [annotation_frames]
-    #                 data_idx.append(range(0, size))
-    #     return data, annotations
     
     def generate_indices(self, size, sampling_num):
         indices = []
