@@ -73,7 +73,7 @@ Please ensure that the paths you provide are correct and accurately point to you
 
 2 - For per-dataset evaluations on Pascal VOC, certain lines should be uncommented in `evaluation.py`. These lines have been clearly indicated within the code.
 
-3 - For video datasets, pass the `dataset_name_val` argument to the `make_loader` function in `data_loader.py`. This will allow you to load the validation set.
+3 - For video datasets, pass the `dataset_name + _val` argument to the `make_loader` function in `data_loader.py`. This will allow you to load the validation set.
 
 Please follow these instructions to accurately reproduce our findings.
 
