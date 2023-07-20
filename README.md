@@ -6,82 +6,13 @@ Official PyTorch implementation and pretrained models for ***TimeT***. For detai
 
 ![Logo](Images/Fig1.jpg)
 
-# Dataset Structure
-The structure of your dataset should follow the structure of [DAVIS](https://davischallenge.org/) (Densely Annotated VIdeo Segmentation) 2017 Unsupervised dataset.
+# Datasets
 
-# DAVIS Structure Example
-The DAVIS dataset is organized as follows:
+In the following sections, we provide a comprehensive guide that outlines the specific structures that your datasets should emulate, complete with illustrative examples. Adhering to these guidelines will ensure your dataset is appropriately formatted, thereby preventing potential complications during the training phase of our model.
 
-```
-DAVIS
-├── JPEGImages
-│   └── 480p
-│       └── object1
-│           ├── 00000.jpg
-│           ├── 00001.jpg
-│           ├── 00002.jpg
-│           └── ...
-│       └── object2
-│           ├── 00000.jpg
-│           ├── 00001.jpg
-│           ├── 00002.jpg
-│           └── ...
-├── Annotations
-│   └── 480p
-│       └── object1
-│           ├── 00000.png
-│           ├── 00001.png
-│           ├── 00002.png
-│           └── ...
-│       └── object2
-│           ├── 00000.png
-│           ├── 00001.png
-│           ├── 00002.png
-│           └── ...
-└── ImageSets
-    └── 2017
-        ├── train.txt
-        ├── val.txt
-        └── test-dev.txt
-```
+For datasets that don't naturally conform to this structure, such as VISOR, we've accommodated this by providing a useful code snippet to aid the conversion process. More detailed information can be found by referring to the link below:
 
-Also, the same for [YTVOS](https://youtube-vos.org/dataset/vos/):
-
-```
-
-YouTubeVOS
-├── train
-│ ├── Annotations
-│ ├── JPEGImages
-│ └── meta.json
-└── valid
-├── Annotations
-├── JPEGImages
-└── meta.json
-
-```
-
-For [Pascal VOC](https://www.dropbox.com/s/6gd4x0i9ewasymb/voc_data.zip?dl=0) in the evaluation time : 
-
-```
-dataset root.
-└───SegmentationClass
-│   │   *.png
-│   │   ...
-└───SegmentationClassAug # contains segmentation masks from trainaug extension 
-│   │   *.png
-│   │   ...
-└───images
-│   │   *.jpg
-│   │   ...
-└───sets
-│   │   train.txt
-│   │   trainaug.txt
-│   │   val.txt
-
-```
-
-Please ensure your dataset adheres to this structure for compatibility. For datasets that deviate from the standard structure, such as [VISOR](https://epic-kitchens.github.io/VISOR/), we've included a snippet of code to manage the necessary conversion.
+[Dataset Structures](dataset_README.md)
 
 # Adjusting Paths in the Data Loader
 
@@ -100,11 +31,29 @@ Please ensure that the paths you provide are correct and accurately point to you
 
 3 - For video datasets, pass the `dataset_name + _val` argument to the `make_loader` function in `data_loader.py`. This will allow you to load the validation set.
 
-Please follow these instructions to accurately reproduce our findings.
+For accurate replication of our results, please adhere to the following instructions. We've set all arguments to their default values for your convenience. However, if you wish to alter the number of inference clusters, such as in clustering or overclustering experiments, you may utilize the command detailed below : 
+
+```python
+python evaluation.py --num_clusters 21
+```
+
+For overclustering experiment ```many_to_one``` and ```precision_based``` should be set to **True**. 
 
 # Training
 
 To start training from scratch, execute `time_tuning.py`. By default, the argument values are set for single GPU training without the utilization of an Exponential Moving Average (EMA) teacher, and no queue is used. However, activating these features has been observed to yield a slight performance enhancement on certain datasets, like [MOSE](https://henghuiding.github.io/MOSE/). The validation performance is logged every four epochs, while the loss is recorded with each iteration.
+
+The training starts by running the following command :
+
+```python
+python time_tuning.py
+```
+
+To modify various training parameters such as the number of training prototypes, whether to add or remove the queue or EMA teacher, the presence of a projection head, or the number of clip frames, you can directly add the relevant arguments to your execution command :
+
+```python
+python time_tuning.py --num_clusters 200 --use_queue False --use_teacher True --use_projection_head True --num_frames 4
+```
 
 # Visualizations
 
