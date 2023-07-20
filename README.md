@@ -4,7 +4,7 @@
 Official PyTorch implementation and pretrained models for ***TimeT***. For details, see [arXiv](). Our pretrained model can be found [here](https://www.dropbox.com/scl/fi/nnx2mm8ian9w49vstpgz0/TimeT.pth?rlkey=w9q3hvxd51nb63ammy33qhry0&dl=0). Optimizing with our model, ***TimeT***, does not necessitate a significant GPU budget. Our training process is conducted on a single NVIDIA GeForce RTX 3090, making ***TimeT*** an effortless solution to enhance your Vision Transformer's (ViT) spatial awareness. The only prerequisite is to create videos featuring the objects that you aim to segment in your subsequent tasks. After that, simply fine-tune a pre-trained ViT using our proprietary temporal loss. 
 
 
-![Logo](Images/Main.jpg)
+![Logo](Images/Fig1.jpg)
 
 # Dataset Structure
 The structure of your dataset should follow the structure of [DAVIS](https://davischallenge.org/) (Densely Annotated VIdeo Segmentation) 2017 Unsupervised dataset.
@@ -111,8 +111,13 @@ To start training from scratch, execute `time_tuning.py`. By default, the argume
 For more visualizations please download the visualizations folder.
 
 
-|    |    |    |    |
-|:--:|:--:|:--:|:--:|
-| ![](Visualizations/Pascal/0_0.gif)  | ![](Visualizations/Pascal/0_1.gif)  | ![](Visualizations/Pascal/0_16.gif) | ![](Visualizations/Pascal/0_2.gif)  |
-| ![](Visualizations/Pascal/0_20.gif) | ![](Visualizations/Pascal/0_22.gif) | ![](Visualizations/Pascal/0_27.gif) | ![](Visualizations/Pascal/0_29.gif) |
-| ![](Visualizations/Pascal/2_44.gif)  | ![](Visualizations/Pascal/1_17.gif) | ![](Visualizations/Pascal/0_36.gif) | ![](Visualizations/Pascal/0_48.gif) |
+|    |    |    |
+|:--:|:--:|:--:|
+| ![](Images/0_0.gif) | ![](Images/0_2.gif)  | ![](Images/0_7.gif) |
+| ![](Images/0_9.gif) | ![](Images/0_20.gif) | ![](Images/0_48.gif) |
+| ![](Images/1_23.gif)  | ![](Images/2_1.gif) | ![](Images/2_3.gif) |
+
+
+# Citation
+
+If you find this repository useful, please consider giving a star ⭐ and citation 📣:
