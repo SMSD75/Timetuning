@@ -1,4 +1,4 @@
-name: vision
+name: Timetuning
 channels:
   - pytorch
   - nvidia
@@ -290,4 +290,4 @@ dependencies:
     - yapf==0.32.0
     - yarl==1.7.2
     - youtube-dl==2021.12.17
-prefix: /home/ssalehi/miniconda3/envs/vision
+prefix: /home/ssalehi/miniconda3/envs/Timetuning

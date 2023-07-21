@@ -23,6 +23,22 @@ The correct configuration of this path is crucial. If the directory `JPEGImages`
 Please ensure that the paths you provide are correct and accurately point to your dataset's location.
 
 
+# Requirements
+
+We recommend to use conda for installing the requirements. If you haven't installed conda yet, you can find instructions [here](https://www.anaconda.com/download). The steps for installing the requirements are:
+
+1 - Create a new environment from the provided YAML file:
+
+```python
+conda env create -f environment.yml
+```
+
+2 - Activate the environment:
+
+```python
+conda activate Timetuning
+```
+
 # Evaluation
 
 1 - To replicate the results presented in the paper, you'll need to use `evaluation.py`, `linear_finetune.py`, and `cluster_based_foreground_extraction.py`.
