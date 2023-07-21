@@ -35,7 +35,7 @@ conda env create -f environment.yml
 
 2 - Activate the environment:
 
-```python
+```
 conda activate Timetuning
 ```
 
