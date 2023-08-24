@@ -7,7 +7,7 @@
     - [GPU Requirements](#gpu-requirements)
     - [Training Process](#training-process)
 2. [Loading Pretrained Models](#loading-pretrained-models)
-    - [Download Link](#download-link)
+    - [Download Link](https://www.dropbox.com/scl/fi/nnx2mm8ian9w49vstpgz0/TimeT.pth?rlkey=w9q3hvxd51nb63ammy33qhry0&dl=0)
     - [How to Use](#how-to-use)
 3. [Datasets](#datasets)
     - [Dataset Guidelines](#dataset-guidelines)
@@ -53,6 +53,7 @@ Optimizing with our model, ***TimeT***, does not necessitate a significant GPU b
 
 
 ## Loading pretrained models
+<a name="how-to-use"></a>
 Our pretrained model (ViT-S16) can be found [here](https://www.dropbox.com/scl/fi/nnx2mm8ian9w49vstpgz0/TimeT.pth?rlkey=w9q3hvxd51nb63ammy33qhry0&dl=0). To use TimeT embeddings on downstream dense prediction tasks, you just need to install timm and torch and run:
 ```python
 import torch
