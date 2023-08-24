@@ -1,8 +1,11 @@
+
+# Time Does Tell: Self-Supervised Time-Tuning of Dense Image Representations
+
 [Mohammadreza Salehi](https://scholar.google.com/citations?user=kpT3gcsAAAAJ&hl=en), [Efstratios Gavves](https://www.egavves.com/), [Cees G. M. Snoek](https://www.ceessnoek.info/), [Yuki M. Asano](https://yukimasano.github.io/)
 
 # Table of Contents
 
-1. [Time Does Tell: Self-Supervised Time-Tuning of Dense Image Representations](#time-does-tell)
+1. [Introduction](#time-does-tell)
     - [GPU Requirements](#gpu-requirements)
     - [Training Process](#training-process)
 2. [Loading Pretrained Models](#loading-pretrained-models)
@@ -20,7 +23,7 @@
 
 
 
-# Time Does Tell: Self-Supervised Time-Tuning of Dense Image Representations
+# Introduction
 <a name="time-does-tell"></a>
 
 Official PyTorch implementation and pretrained models for ***TimeT***. For details, see [arXiv](https://arxiv.org/abs/2308.11796). ***TimeT*** is an effortless solution to enhance your Vision Transformer's (ViT) spatial features. The only prerequisite is to create videos featuring the objects that you aim to segment in your subsequent tasks. After that, simply fine-tune a pre-trained ViT using our self-supervised temporal loss. 
