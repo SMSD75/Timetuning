@@ -16,7 +16,7 @@ model = vit_small_patch16_224()
 state_dict = torch.load(path_to_checkpoint)
 model.load_state_dict({".".join(k.split(".")[2:]): v for k, v in state_dict.items()}, strict=False)
 # Now you can call model.forward_features(batch) to get semantically rich image patch embeddings 
-# of 16x16 (8x8) pixel each
+# of 16x16 pixel each
 
 ```
 
