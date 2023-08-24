@@ -16,8 +16,8 @@
 9. [Visualizations](#visualizations)
 10. [Citation](#citation)
 
-# Introduction
-<a name="introduction"></a>
+
+
 ## Time Does Tell: Self-Supervised Time-Tuning of Dense Image Representations
 <a name="time-does-tell"></a>
 
