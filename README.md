@@ -1,4 +1,4 @@
-# Time Does Tell a Lot: Self-Supervised Learning of Dense Image Representations
+# Time Does Tell: Self-Supervised Time-Tuning of Dense Image Representations
 
 
 Official PyTorch implementation and pretrained models for ***TimeT***. For details, see [arXiv](). Our pretrained model can be found [here](https://www.dropbox.com/scl/fi/nnx2mm8ian9w49vstpgz0/TimeT.pth?rlkey=w9q3hvxd51nb63ammy33qhry0&dl=0). Optimizing with our model, ***TimeT***, does not necessitate a significant GPU budget. Our training process is conducted on a single NVIDIA GeForce RTX 3090, making ***TimeT*** an effortless solution to enhance your Vision Transformer's (ViT) spatial awareness. The only prerequisite is to create videos featuring the objects that you aim to segment in your subsequent tasks. After that, simply fine-tune a pre-trained ViT using our proprietary temporal loss. 
