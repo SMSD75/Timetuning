@@ -14,7 +14,9 @@
 5. [Requirements](#requirements)
 7. [Evaluation](#evaluation)
 9. [Visualizations](#visualizations)
-10. [Citation](#citation)
+    - [Transferring Model to the Image Domain](#Transfer-images)
+    - [Testing Model on the Video Domain](#Test-videos)
+11. [Citation](#citation)
 
 
 
@@ -136,6 +138,7 @@ If you're keen on visualizing the samples, this can be readily achieved. Simply 
 For more visualizations please download the visualizations folder.
 
 ## Transferring Model to the Image Domain
+<a name="transfer-images"></a>
 
 ✅ Although the model was primarily trained on video data, it exhibits impressive performance on the Pascal VOC dataset too. This is notable because the Pascal VOC dataset primarily contains images with a different distribution, suggesting that the model's training on videos equipped it with a versatile capability to handle both motion and static visual content.
 
@@ -148,6 +151,7 @@ For more visualizations please download the visualizations folder.
 
 
 ## Testing Model on the Video Domain
+<a name="test-videos"></a>
 
 ✅ As can be observed, while 'DINO' and 'Leopart' might excel in image datasets, their features remain susceptible to minor temporal variations commonly found in videos. In contrast, ***TimeT*** demonstrates more robust segmentation maps.
 
