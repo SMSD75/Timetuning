@@ -10,7 +10,6 @@
     - [Download Link](https://www.dropbox.com/scl/fi/nnx2mm8ian9w49vstpgz0/TimeT.pth?rlkey=w9q3hvxd51nb63ammy33qhry0&dl=0)
     - [How to Use](#how-to-use)
 3. [Datasets](#datasets)
-    - [Dataset Guidelines](#dataset-guidelines)
     - [Dataset Structures Link](dataset_README.md)
 4. [Adjusting Paths in the Data Loader](#adjusting-paths)
 5. [Requirements](#requirements)
