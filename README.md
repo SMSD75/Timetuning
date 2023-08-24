@@ -1,7 +1,55 @@
+
+
+# Table of Contents
+
+1. [Introduction](#introduction)
+    - [Time Does Tell: Self-Supervised Time-Tuning of Dense Image Representations](#time-does-tell)
+    - [Official PyTorch Implementation](#pytorch-implementation)
+    - [GPU Requirements](#gpu-requirements)
+    - [Training Process](#training-process)
+    - [Logo](#logo)
+2. [Loading Pretrained Models](#loading-pretrained-models)
+    - [Download Link](#download-link)
+    - [How to Use](#how-to-use)
+3. [Datasets](#datasets)
+    - [Dataset Guidelines](#dataset-guidelines)
+    - [Special Considerations](#special-considerations)
+    - [Dataset Structures Link](#dataset-structures-link)
+4. [Adjusting Paths in the Data Loader](#adjusting-paths)
+    - [Setting up Paths](#setting-up-paths)
+    - [JPEGImages and Annotations](#jpegimages-and-annotations)
+    - [Handling Video and Image Data](#handling-data)
+5. [Requirements](#requirements)
+    - [Recommended Installation Method](#installation-method)
+    - [Creating and Activating Environment](#creating-environment)
+6. [Evaluation](#evaluation)
+    - [Replication of Results](#replication)
+    - [Dataset-Specific Evaluations](#dataset-evaluations)
+    - [Clustering Experiments](#clustering-experiments)
+    - [Visualization of Samples](#visualization-samples)
+7. [Training](#training)
+    - [Default Settings](#default-settings)
+    - [Starting Training](#starting-training)
+    - [Modifying Training Parameters](#modifying-parameters)
+8. [Visualizations](#visualizations)
+    - [Visualization Folder Link](#folder-link)
+    - [Sample Visualizations](#sample-visualizations)
+9. [Citation](#citation)
+
+# Introduction
+<a name="introduction"></a>
+## Time Does Tell: Self-Supervised Time-Tuning of Dense Image Representations
+<a name="time-does-tell"></a>
+
+
+
+
 # Time Does Tell: Self-Supervised Time-Tuning of Dense Image Representations
 
 
 Official PyTorch implementation and pretrained models for ***TimeT***. For details, see [arXiv](https://arxiv.org/abs/2308.11796). Optimizing with our model, ***TimeT***, does not necessitate a significant GPU budget. Our training process is conducted on a single NVIDIA GeForce RTX 3090, making ***TimeT*** an effortless solution to enhance your Vision Transformer's (ViT) spatial awareness. The only prerequisite is to create videos featuring the objects that you aim to segment in your subsequent tasks. After that, simply fine-tune a pre-trained ViT using our self-supervised temporal loss. 
+
+
 
 
 ![Logo](Images/Fig1.jpg)
