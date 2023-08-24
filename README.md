@@ -18,7 +18,7 @@
 
 
 
-## Time Does Tell: Self-Supervised Time-Tuning of Dense Image Representations
+# Time Does Tell: Self-Supervised Time-Tuning of Dense Image Representations
 <a name="time-does-tell"></a>
 
 Official PyTorch implementation and pretrained models for ***TimeT***. For details, see [arXiv](https://arxiv.org/abs/2308.11796). ***TimeT*** is an effortless solution to enhance your Vision Transformer's (ViT) spatial features. The only prerequisite is to create videos featuring the objects that you aim to segment in your subsequent tasks. After that, simply fine-tune a pre-trained ViT using our self-supervised temporal loss. 
@@ -31,6 +31,25 @@ Official PyTorch implementation and pretrained models for ***TimeT***. For detai
 
 <a name="gpu-requirements"></a>
 Optimizing with our model, ***TimeT***, does not necessitate a significant GPU budget. Our training process is conducted on a single NVIDIA GeForce RTX 3090.
+
+
+## Training
+
+<a name="training-process"></a>
+
+To start training from scratch, execute `time_tuning.py`. By default, the argument values are set for single GPU training without the utilization of an Exponential Moving Average (EMA) teacher, and no queue is used. However, activating these features has been observed to yield a slight performance enhancement on certain datasets, like [MOSE](https://henghuiding.github.io/MOSE/). The validation performance is logged every four epochs, while the loss is recorded with each iteration.
+
+The training starts by running the following command :
+
+```python
+python time_tuning.py
+```
+
+To modify various training parameters such as the number of training prototypes, whether to add or remove the queue or EMA teacher, the presence of a projection head, or the number of clip frames, you can directly add the relevant arguments to your execution command :
+
+```python
+python time_tuning.py --num_clusters 200 --use_queue False --use_teacher True --use_projection_head True --num_frames 4
+```
 
 
 
@@ -108,25 +127,9 @@ For overclustering experiment ```many_to_one``` and ```precision_based``` should
 
 If you're keen on visualizing the samples, this can be readily achieved. Simply pass the appropriate  ```logging_directory```  as an argument to the ``` evaluate_localizations```. function. Please note that the default value is currently set to  **None**.
 
-# Training
 
-<a name="training-process"></a>
 
-To start training from scratch, execute `time_tuning.py`. By default, the argument values are set for single GPU training without the utilization of an Exponential Moving Average (EMA) teacher, and no queue is used. However, activating these features has been observed to yield a slight performance enhancement on certain datasets, like [MOSE](https://henghuiding.github.io/MOSE/). The validation performance is logged every four epochs, while the loss is recorded with each iteration.
-
-The training starts by running the following command :
-
-```python
-python time_tuning.py
-```
-
-To modify various training parameters such as the number of training prototypes, whether to add or remove the queue or EMA teacher, the presence of a projection head, or the number of clip frames, you can directly add the relevant arguments to your execution command :
-
-```python
-python time_tuning.py --num_clusters 200 --use_queue False --use_teacher True --use_projection_head True --num_frames 4
-```
-
-## Visualizations
+# Visualizations
 
 <a name="visualizations"> </a>
 
