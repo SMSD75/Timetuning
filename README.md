@@ -7,7 +7,7 @@ Official PyTorch implementation and pretrained models for ***TimeT***. For detai
 ![Logo](Images/Fig1.jpg)
 
 To use TimeT embeddings on downstream dense prediction tasks, you just need to install timm and torch and run:
-```
+```python
 import torch
 from timm.models.vision_transformer import vit_small_patch16_224, vit_base_patch8_224
 path_to_checkpoint = "<your path to downloaded ckpt>"
