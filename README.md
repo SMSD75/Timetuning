@@ -1,17 +1,18 @@
 # Time Does Tell: Self-Supervised Time-Tuning of Dense Image Representations
 
 
-Official PyTorch implementation and pretrained models for ***TimeT***. For details, see [arXiv](https://arxiv.org/abs/2308.11796). Our pretrained model can be found [here](https://www.dropbox.com/scl/fi/nnx2mm8ian9w49vstpgz0/TimeT.pth?rlkey=w9q3hvxd51nb63ammy33qhry0&dl=0). Optimizing with our model, ***TimeT***, does not necessitate a significant GPU budget. Our training process is conducted on a single NVIDIA GeForce RTX 3090, making ***TimeT*** an effortless solution to enhance your Vision Transformer's (ViT) spatial awareness. The only prerequisite is to create videos featuring the objects that you aim to segment in your subsequent tasks. After that, simply fine-tune a pre-trained ViT using our proprietary temporal loss. 
+Official PyTorch implementation and pretrained models for ***TimeT***. For details, see [arXiv](https://arxiv.org/abs/2308.11796). Optimizing with our model, ***TimeT***, does not necessitate a significant GPU budget. Our training process is conducted on a single NVIDIA GeForce RTX 3090, making ***TimeT*** an effortless solution to enhance your Vision Transformer's (ViT) spatial awareness. The only prerequisite is to create videos featuring the objects that you aim to segment in your subsequent tasks. After that, simply fine-tune a pre-trained ViT using our proprietary temporal loss. 
 
 
 ![Logo](Images/Fig1.jpg)
 
-To use TimeT embeddings on downstream dense prediction tasks, you just need to install timm and torch and run:
+# Loading pretrained models
+Our pretrained model (ViT-s16) can be found [here](https://www.dropbox.com/scl/fi/nnx2mm8ian9w49vstpgz0/TimeT.pth?rlkey=w9q3hvxd51nb63ammy33qhry0&dl=0). To use TimeT embeddings on downstream dense prediction tasks, you just need to install timm and torch and run:
 ```python
 import torch
-from timm.models.vision_transformer import vit_small_patch16_224, vit_base_patch8_224
+from timm.models.vision_transformer import vit_small_patch16_224
 path_to_checkpoint = "<your path to downloaded ckpt>"
-model = vit_small_patch16_224()  # or vit_base_patch8_224() if you want to use our larger model
+model = vit_small_patch16_224()
 state_dict = torch.load(path_to_checkpoint)
 model.load_state_dict({".".join(k.split(".")[2:]): v for k, v in state_dict.items()}, strict=False)
 # Now you can call model.forward_features(batch) to get semantically rich image patch embeddings 
