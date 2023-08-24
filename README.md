@@ -31,7 +31,7 @@ Official PyTorch implementation and pretrained models for "Time Does Tell: Self-
 ***TimeT*** is an effortless solution to enhance your Vision Transformer's (ViT) spatial features. The only prerequisite is to create videos featuring the objects that you aim to segment in your subsequent tasks. After that, simply fine-tune a pre-trained ViT using our self-supervised temporal loss. 
 
 
-![Logo](Images/Fig1.jpg)
+![Logo](Images/Fig1.png)
 
 
 ## GPU Requirements
