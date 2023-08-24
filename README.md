@@ -4,7 +4,6 @@
 
 1. [Introduction](#introduction)
     - [Time Does Tell: Self-Supervised Time-Tuning of Dense Image Representations](#time-does-tell)
-    - [Official PyTorch Implementation](#pytorch-implementation)
     - [GPU Requirements](#gpu-requirements)
     - [Training Process](#training-process)
     - [Logo](#logo)
@@ -41,20 +40,20 @@
 ## Time Does Tell: Self-Supervised Time-Tuning of Dense Image Representations
 <a name="time-does-tell"></a>
 
-
-
-
-# Time Does Tell: Self-Supervised Time-Tuning of Dense Image Representations
-
-
-Official PyTorch implementation and pretrained models for ***TimeT***. For details, see [arXiv](https://arxiv.org/abs/2308.11796). Optimizing with our model, ***TimeT***, does not necessitate a significant GPU budget. Our training process is conducted on a single NVIDIA GeForce RTX 3090, making ***TimeT*** an effortless solution to enhance your Vision Transformer's (ViT) spatial awareness. The only prerequisite is to create videos featuring the objects that you aim to segment in your subsequent tasks. After that, simply fine-tune a pre-trained ViT using our self-supervised temporal loss. 
-
-
+Official PyTorch implementation and pretrained models for ***TimeT***. For details, see [arXiv](https://arxiv.org/abs/2308.11796). ***TimeT*** is an effortless solution to enhance your Vision Transformer's (ViT) spatial features. The only prerequisite is to create videos featuring the objects that you aim to segment in your subsequent tasks. After that, simply fine-tune a pre-trained ViT using our self-supervised temporal loss. 
 
 
 ![Logo](Images/Fig1.jpg)
 
-# Loading pretrained models
+
+## GPU Requirements
+
+<a name="gpu-requirements"></a>
+Optimizing with our model, ***TimeT***, does not necessitate a significant GPU budget. Our training process is conducted on a single NVIDIA GeForce RTX 3090.
+
+
+
+## Loading pretrained models
 Our pretrained model (ViT-S16) can be found [here](https://www.dropbox.com/scl/fi/nnx2mm8ian9w49vstpgz0/TimeT.pth?rlkey=w9q3hvxd51nb63ammy33qhry0&dl=0). To use TimeT embeddings on downstream dense prediction tasks, you just need to install timm and torch and run:
 ```python
 import torch
@@ -68,7 +67,7 @@ model.load_state_dict({".".join(k.split(".")[2:]): v for k, v in state_dict.item
 
 ```
 
-# Datasets
+## Datasets
 
 In the following sections, we provide a comprehensive guide that outlines the specific structures that your datasets should emulate, complete with illustrative examples. Adhering to these guidelines will ensure your dataset is appropriately formatted, thereby preventing potential complications during the training phase of our model.
 
@@ -76,7 +75,7 @@ For datasets that don't naturally conform to this structure, such as VISOR, we'v
 
 [Dataset Structures](dataset_README.md)
 
-# Adjusting Paths in the Data Loader
+## Adjusting Paths in the Data Loader
 
 You can adjust the paths of your dataset as has been set in the function `make_loader` in `data_loader.py`. To ensure accurate loading, this function should be set to point directly to the root of your dataset, specifically to the `JPEGImages` and `Annotations` for images and labels, respectively. If this path is incorrect, the dataloader will not be able to find and load your dataset correctly.
 
@@ -85,7 +84,7 @@ The correct configuration of this path is crucial. If the directory `JPEGImages`
 Please ensure that the paths you provide are correct and accurately point to your dataset's location.
 
 
-# Requirements
+## Requirements
 
 We recommend to use conda for installing the requirements. If you haven't installed conda yet, you can find instructions [here](https://www.anaconda.com/download). The steps for installing the requirements are:
 
@@ -101,7 +100,7 @@ conda env create -f environment.yml
 conda activate Timetuning
 ```
 
-# Evaluation
+## Evaluation
 
 1 - To replicate the results presented in the paper, you'll need to use `evaluation.py`, `linear_finetune.py`, and `cluster_based_foreground_extraction.py`.
 
@@ -119,7 +118,7 @@ For overclustering experiment ```many_to_one``` and ```precision_based``` should
 
 If you're keen on visualizing the samples, this can be readily achieved. Simply pass the appropriate  ```logging_directory```  as an argument to the ``` evaluate_localizations```. function. Please note that the default value is currently set to  **None**.
 
-# Training
+## Training
 
 To start training from scratch, execute `time_tuning.py`. By default, the argument values are set for single GPU training without the utilization of an Exponential Moving Average (EMA) teacher, and no queue is used. However, activating these features has been observed to yield a slight performance enhancement on certain datasets, like [MOSE](https://henghuiding.github.io/MOSE/). The validation performance is logged every four epochs, while the loss is recorded with each iteration.
 
@@ -135,7 +134,7 @@ To modify various training parameters such as the number of training prototypes,
 python time_tuning.py --num_clusters 200 --use_queue False --use_teacher True --use_projection_head True --num_frames 4
 ```
 
-# Visualizations
+## Visualizations
 
 For more visualizations please download the visualizations folder.
 
@@ -147,7 +146,7 @@ For more visualizations please download the visualizations folder.
 | ![](Images/1_23.gif)  | ![](Images/2_1.gif) | ![](Images/2_3.gif) |
 
 
-# Citation
+## Citation
 
 If you find this repository useful, please consider giving a star ⭐ and citation 📣:
 ``` 
