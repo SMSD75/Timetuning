@@ -7,7 +7,7 @@ Official PyTorch implementation and pretrained models for ***TimeT***. For detai
 ![Logo](Images/Fig1.jpg)
 
 # Loading pretrained models
-Our pretrained model (ViT-s16) can be found [here](https://www.dropbox.com/scl/fi/nnx2mm8ian9w49vstpgz0/TimeT.pth?rlkey=w9q3hvxd51nb63ammy33qhry0&dl=0). To use TimeT embeddings on downstream dense prediction tasks, you just need to install timm and torch and run:
+Our pretrained model (ViT-S16) can be found [here](https://www.dropbox.com/scl/fi/nnx2mm8ian9w49vstpgz0/TimeT.pth?rlkey=w9q3hvxd51nb63ammy33qhry0&dl=0). To use TimeT embeddings on downstream dense prediction tasks, you just need to install timm and torch and run:
 ```python
 import torch
 from timm.models.vision_transformer import vit_small_patch16_224
