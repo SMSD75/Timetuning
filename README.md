@@ -6,6 +6,19 @@ Official PyTorch implementation and pretrained models for ***TimeT***. For detai
 
 ![Logo](Images/Fig1.jpg)
 
+To use TimeT embeddings on downstream dense prediction tasks, you just need to install timm and torch and run:
+```
+import torch
+from timm.models.vision_transformer import vit_small_patch16_224, vit_base_patch8_224
+path_to_checkpoint = "<your path to downloaded ckpt>"
+model = vit_small_patch16_224()  # or vit_base_patch8_224() if you want to use our larger model
+state_dict = torch.load(path_to_checkpoint)
+model.load_state_dict({".".join(k.split(".")[2:]): v for k, v in state_dict.items()}, strict=False)
+# Now you can call model.forward_features(batch) to get semantically rich image patch embeddings 
+# of 16x16 (8x8) pixel each
+
+```
+
 # Datasets
 
 In the following sections, we provide a comprehensive guide that outlines the specific structures that your datasets should emulate, complete with illustrative examples. Adhering to these guidelines will ensure your dataset is appropriately formatted, thereby preventing potential complications during the training phase of our model.
