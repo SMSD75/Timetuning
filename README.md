@@ -3,7 +3,7 @@
 
 [Mohammadreza Salehi](https://scholar.google.com/citations?user=kpT3gcsAAAAJ&hl=en), [Efstratios Gavves](https://www.egavves.com/), [Cees G. M. Snoek](https://www.ceessnoek.info/), [Yuki M. Asano](https://yukimasano.github.io/)
 
-# Table of Contents
+# Contents
 
 1. [Introduction](#time-does-tell)
     - [GPU Requirements](#gpu-requirements)
