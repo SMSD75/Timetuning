@@ -6,7 +6,6 @@
     - [Time Does Tell: Self-Supervised Time-Tuning of Dense Image Representations](#time-does-tell)
     - [GPU Requirements](#gpu-requirements)
     - [Training Process](#training-process)
-    - [Logo](#logo)
 2. [Loading Pretrained Models](#loading-pretrained-models)
     - [Download Link](#download-link)
     - [How to Use](#how-to-use)
@@ -119,6 +118,8 @@ For overclustering experiment ```many_to_one``` and ```precision_based``` should
 If you're keen on visualizing the samples, this can be readily achieved. Simply pass the appropriate  ```logging_directory```  as an argument to the ``` evaluate_localizations```. function. Please note that the default value is currently set to  **None**.
 
 ## Training
+
+<a name="training-process"></a>
 
 To start training from scratch, execute `time_tuning.py`. By default, the argument values are set for single GPU training without the utilization of an Exponential Moving Average (EMA) teacher, and no queue is used. However, activating these features has been observed to yield a slight performance enhancement on certain datasets, like [MOSE](https://henghuiding.github.io/MOSE/). The validation performance is logged every four epochs, while the loss is recorded with each iteration.
 
