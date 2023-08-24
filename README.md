@@ -152,12 +152,14 @@ For more visualizations please download the visualizations folder.
 
 <table>
 <tr>
+<td align="center">Input</td>
 <td align="center">DINO</td>
 <td align="center">Leopart</td>
 <td align="center">TimeT</td>
 </tr>
 <tr>
-<td><img src="Visualizations/YTVOS/0_0_dino_r.gif" alt="First GIF" width="200"/></td>
+<td><img src="Images/vid_ref.gif" alt="First GIF" width="200"/></td>
+<td><img src="Images/vid_ref.gif" alt="First GIF" width="200"/></td>
 <td><img src="Visualizations/YTVOS/0_0_leopart_r.gif" alt="Second GIF" width="200"/></td>
 <td><img src="Visualizations/YTVOS/0_0_r.gif" alt="Third GIF" width="200"/></td>
 </tr>
