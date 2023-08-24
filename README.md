@@ -11,28 +11,12 @@
     - [How to Use](#how-to-use)
 3. [Datasets](#datasets)
     - [Dataset Guidelines](#dataset-guidelines)
-    - [Special Considerations](#special-considerations)
-    - [Dataset Structures Link](#dataset-structures-link)
+    - [Dataset Structures Link](dataset_README.md)
 4. [Adjusting Paths in the Data Loader](#adjusting-paths)
-    - [Setting up Paths](#setting-up-paths)
-    - [JPEGImages and Annotations](#jpegimages-and-annotations)
-    - [Handling Video and Image Data](#handling-data)
 5. [Requirements](#requirements)
-    - [Recommended Installation Method](#installation-method)
-    - [Creating and Activating Environment](#creating-environment)
-6. [Evaluation](#evaluation)
-    - [Replication of Results](#replication)
-    - [Dataset-Specific Evaluations](#dataset-evaluations)
-    - [Clustering Experiments](#clustering-experiments)
-    - [Visualization of Samples](#visualization-samples)
-7. [Training](#training)
-    - [Default Settings](#default-settings)
-    - [Starting Training](#starting-training)
-    - [Modifying Training Parameters](#modifying-parameters)
-8. [Visualizations](#visualizations)
-    - [Visualization Folder Link](#folder-link)
-    - [Sample Visualizations](#sample-visualizations)
-9. [Citation](#citation)
+7. [Evaluation](#evaluation)
+9. [Visualizations](#visualizations)
+10. [Citation](#citation)
 
 # Introduction
 <a name="introduction"></a>
@@ -69,6 +53,8 @@ model.load_state_dict({".".join(k.split(".")[2:]): v for k, v in state_dict.item
 
 # Datasets
 
+<a name="datasets"></a>
+
 In the following sections, we provide a comprehensive guide that outlines the specific structures that your datasets should emulate, complete with illustrative examples. Adhering to these guidelines will ensure your dataset is appropriately formatted, thereby preventing potential complications during the training phase of our model.
 
 For datasets that don't naturally conform to this structure, such as VISOR, we've accommodated this by providing a useful code snippet to aid the conversion process. More detailed information can be found by referring to the link below:
@@ -76,6 +62,8 @@ For datasets that don't naturally conform to this structure, such as VISOR, we'v
 [Dataset Structures](dataset_README.md)
 
 # Adjusting Paths in the Data Loader
+
+<a name="adjusting-paths"></a>
 
 You can adjust the paths of your dataset as has been set in the function `make_loader` in `data_loader.py`. To ensure accurate loading, this function should be set to point directly to the root of your dataset, specifically to the `JPEGImages` and `Annotations` for images and labels, respectively. If this path is incorrect, the dataloader will not be able to find and load your dataset correctly.
 
@@ -85,6 +73,8 @@ Please ensure that the paths you provide are correct and accurately point to you
 
 
 # Requirements
+
+<a name="requirements"> </a>
 
 We recommend to use conda for installing the requirements. If you haven't installed conda yet, you can find instructions [here](https://www.anaconda.com/download). The steps for installing the requirements are:
 
@@ -101,6 +91,8 @@ conda activate Timetuning
 ```
 
 # Evaluation
+
+<a name="evaluation"></a>
 
 1 - To replicate the results presented in the paper, you'll need to use `evaluation.py`, `linear_finetune.py`, and `cluster_based_foreground_extraction.py`.
 
@@ -138,6 +130,8 @@ python time_tuning.py --num_clusters 200 --use_queue False --use_teacher True --
 
 ## Visualizations
 
+<a name="visualizations"> </a>
+
 For more visualizations please download the visualizations folder.
 
 
@@ -149,6 +143,8 @@ For more visualizations please download the visualizations folder.
 
 
 # Citation
+
+<a name="citation"> </a>
 
 If you find this repository useful, please consider giving a star ⭐ and citation 📣:
 ``` 
