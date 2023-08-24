@@ -158,10 +158,10 @@ For more visualizations please download the visualizations folder.
 <td align="center">TimeT</td>
 </tr>
 <tr>
-<td><img src="Images/vid_ref.gif" alt="First GIF" width="250"/></td>
-<td><img src="Images/dino.gif" alt="First GIF" width="250"/></td>
-<td><img src="Images/leopart.gif" alt="Second GIF" width="250"/></td>
-<td><img src="Images/TimeT.gif" alt="Third GIF" width="250"/></td>
+<td><img src="Images/vid_ref.gif" alt="First GIF" width="225"/></td>
+<td><img src="Images/dino.gif" alt="First GIF" width="225"/></td>
+<td><img src="Images/leopart.gif" alt="Second GIF" width="225"/></td>
+<td><img src="Images/TimeT.gif" alt="Third GIF" width="225"/></td>
 </tr>
 </table>
 
