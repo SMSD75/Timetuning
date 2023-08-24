@@ -88,7 +88,7 @@ For more visualizations please download the visualizations folder.
 # Citation
 
 If you find this repository useful, please consider giving a star ⭐ and citation 📣:
-``` python
+``` 
 @article{salehi2023time,
    title        = {Time Does Tell: Self-Supervised Time-Tuning of Dense Image Representations},
    author       = {Salehi, Mohammadreza and Gavves, Efstratios and Snoek, Cees G. M. and Asano, Yuki M.},
