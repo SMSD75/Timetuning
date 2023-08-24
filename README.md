@@ -2,8 +2,7 @@
 
 # Table of Contents
 
-1. [Introduction](#introduction)
-    - [Time Does Tell: Self-Supervised Time-Tuning of Dense Image Representations](#time-does-tell)
+1. [Time Does Tell: Self-Supervised Time-Tuning of Dense Image Representations](#time-does-tell)
     - [GPU Requirements](#gpu-requirements)
     - [Training Process](#training-process)
 2. [Loading Pretrained Models](#loading-pretrained-models)
