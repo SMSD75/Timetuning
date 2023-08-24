@@ -178,6 +178,14 @@ For more visualizations please download the visualizations folder.
 <td><img src="Images/leopart.gif" alt="Second GIF" width="180"/></td>
 <td><img src="Images/TimeT.gif" alt="Third GIF" width="180"/></td>
 </tr>
+
+<tr>
+<td><img src="Images/vid_ref1.gif" alt="First GIF" width="180"/></td>
+<td><img src="Images/dino_ref1.gif" alt="First GIF" width="180"/></td>
+<td><img src="Images/leopart_ref1.gif" alt="Second GIF" width="180"/></td>
+<td><img src="Images/TimeT_ref1.gif" alt="Third GIF" width="180"/></td>
+</tr>
+
 </table>
 
 
