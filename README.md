@@ -3,7 +3,7 @@
 
 Official PyTorch implementation and pretrained models for "Time Does Tell: Self-Supervised Time-Tuning of Dense Image Representations" ICCV23. For details, see [arXiv](https://arxiv.org/abs/2308.11796).
 
-[Mohammadreza Salehi](https://scholar.google.com/citations?user=kpT3gcsAAAAJ&hl=en), [Efstratios Gavves](https://www.egavves.com/), [Cees G. M. Snoek](https://www.ceessnoek.info/), [Yuki M. Asano](https://yukimasano.github.io/), QUVA Lab, University of Amsterdam
+[Mohammadreza Salehi](https://scholar.google.com/citations?user=kpT3gcsAAAAJ&hl=en), [Efstratios Gavves](https://www.egavves.com/), [Cees G. M. Snoek](https://www.ceessnoek.info/), [Yuki M. Asano](https://yukimasano.github.io/), [QUVA Lab](https://ivi.fnwi.uva.nl/quva/), University of Amsterdam
 
 # Contents
 
