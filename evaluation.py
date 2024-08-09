@@ -248,7 +248,7 @@ def evaluate_propagation(PredsEval: PredsmIoU, gts:torch.Tensor, preds: torch.Te
 
 
 def evaluate_localizations(PredsEval, gts, preds, evaluation_protocol, logging_directory, many_to_one=False, precision_based=False): ## gets tensors with the [bs, fs, input_resolution, input_resolution] and does the evaluation
-    ## visualization of the heatmaps is very ugly. It should be changed some how.
+    ## visualization of the heatmaps is very ugly. It should be changed somehow.
 
     bs, fs, h, w = preds.shape
     scores = []
