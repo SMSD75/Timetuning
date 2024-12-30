@@ -254,7 +254,7 @@ def sinkhorn(Q: torch.Tensor, nmb_iters: int, world_size=1) -> torch.Tensor:
         K, B = Q.shape
         u = torch.zeros(K).to(Q.device)
         r = torch.ones(K).to(Q.device) / K
-        c = torch.ones(B).to(Q.device) / B * world_size
+        c = torch.ones(B).to(Q.device) / (B * world_size)
 
         if world_size > 1:
             curr_sum = torch.sum(Q, dim=1)
